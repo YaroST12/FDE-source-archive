@@ -5,8 +5,8 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <unistd.h>
-#define FDE "FDE.AI-v8.0"
-#define VER "/dev/fdeai/800"
+#define FDE "FDE.AI-v8.1"
+#define VER "/dev/fdeai/810"
 
 static void runnability(void);
 static char *timestamp(void);
@@ -21,7 +21,7 @@ char *asctime_r(const struct tm *tm, char *buf);
 FILE *popen(const char *command, const char *type);
 int pclose(FILE *stream);
 
-static void runnability() { system("touch /dev/fdeai/800"); }
+static void runnability() { system("touch /dev/fdeai/810"); }
 
 static char *timestamp() {
   time_t ltime = time(NULL);
@@ -789,35 +789,37 @@ int main() {
       } else {
         flog("Optimizing file system options", "...", 1);
       };
-      system("for x in $(/dev/fdeai/busybox cat /proc/mounts|/dev/fdeai/busybox grep ext4|/dev/fdeai/busybox cut -d ' ' -f2);do /dev/fdeai/busybox mount -o remount,defaults,noatime,delalloc,noauto_da_alloc,discard,init_itable=90,max_batch_time=33000,errors=remount-ro,commit=45 ${x};done >/dev/null 2>&1 & for gf in $(/dev/fdeai/busybox cat /proc/mounts|/dev/fdeai/busybox grep f2fs|/dev/fdeai/busybox cut -d ' ' -f2);do /dev/fdeai/busybox mount -o remount,defaults,noatime,discard,nobarrier ${gf};done >/dev/null 2>&1 &");
+      if (SDK <= 28) {
+        system("for x in $(/dev/fdeai/busybox cat /proc/mounts|/dev/fdeai/busybox grep ext4|/dev/fdeai/busybox cut -d ' ' -f2);do /dev/fdeai/busybox mount -o remount,noatime,commit=36,max_batch_time=27000,init_itable=36 ${x};done >/dev/null 2>&1 & for gf in $(/dev/fdeai/busybox cat /proc/mounts|/dev/fdeai/busybox grep f2fs|/dev/fdeai/busybox cut -d ' ' -f2);do /dev/fdeai/busybox mount -o remount,noatime,fsync_mode=nobarrier ${gf};done >/dev/null 2>&1 &");
+      };
       fecho("0", "/sys/module/ext4/parameters/mballoc_debug");
       if (file_exist("/sys/kernel/debug/ufshcd0")) {
         fecho("1", "/sys/kernel/debug/ufshcd0/reset_controller");
       };
     };
     if (file_exist("/sbin/magisk")) {
-      system("(resetprop ro.HOME_APP_ADJ 1;resetprop persist.radio.ramdump 0;resetprop pm.sleep_mode 1;resetprop persist.wpa_supplicant.debug false;resetprop dalvik.vm.checkjni false;resetprop dalvik.vm.check-dex-sum false;resetprop dalvik.vm.debug.alloc 0;resetprop dalvik.vm.deadlock-predict off;resetprop dalvik.vm.verify-bytecode false;resetprop libc.debug.malloc 0;resetprop debug.atrace.tags.enableflags 0;resetprop vidc.debug.level 0;resetprop debug.mdpcomp.logs 0;resetprop logd.logpersistd.enable false;resetprop ro.kernel.android.checkjni 0;resetprop touch.pressure.scale 0.5;resetprop ro.config.nocheckin 1;resetprop ro.kernel.checkjni 0;resetprop profiler.launch false;resetprop profiler.force_disable_err_rpt 1;resetprop profiler.force_disable_ulog 1;resetprop profiler.debugmonitor false;resetprop profiler.hung.dumpdobugreport false;resetprop debugtool.anrhistory 0;resetprop video.accelerate.hw 1;resetprop trustkernel.log.state disable;resetprop hwui.render_dirty_regions false;resetprop debug.hwui.render_dirty_regions false;resetprop persist.sys.ssr.enable_ramdumps 0;resetprop persist.vendor.sys.ssr.enable_ramdumps 0;resetprop persist.traced.enable 0;resetprop ro.lmk.log_stats 0;resetprop debug.egl.hw 1;) >/dev/null 2>&1 &");
+      system("(resetprop ro.HOME_APP_ADJ 1;resetprop persist.radio.ramdump 0;resetprop pm.sleep_mode 1;resetprop persist.wpa_supplicant.debug false;resetprop dalvik.vm.checkjni false;resetprop dalvik.vm.check-dex-sum false;resetprop dalvik.vm.debug.alloc 0;resetprop dalvik.vm.deadlock-predict off;resetprop dalvik.vm.verify-bytecode false;resetprop libc.debug.malloc 0;resetprop debug.atrace.tags.enableflags 0;resetprop vidc.debug.level 0;resetprop debug.mdpcomp.logs 0;resetprop logd.logpersistd.enable false;resetprop ro.kernel.android.checkjni 0;resetprop touch.pressure.scale 0.5;resetprop ro.config.nocheckin 1;resetprop ro.kernel.checkjni 0;resetprop profiler.launch false;resetprop profiler.force_disable_err_rpt 1;resetprop profiler.force_disable_ulog 1;resetprop profiler.debugmonitor false;resetprop profiler.hung.dumpdobugreport false;resetprop debugtool.anrhistory 0;resetprop video.accelerate.hw 1;resetprop trustkernel.log.state disable;resetprop hwui.render_dirty_regions false;resetprop debug.hwui.render_dirty_regions false;resetprop persist.sys.ssr.enable_ramdumps 0;resetprop persist.vendor.sys.ssr.enable_ramdumps 0;resetprop persist.traced.enable 0;resetprop ro.lmk.log_stats 0;resetprop debug.egl.hw 1;resetprop persist.sys.strictmode.disable 1;) >/dev/null 2>&1 &");
+      if (MAXfreq >= 2400) {
+        system("resetprop windowsmgr.max_events_per_sec 240;");
+      } else {
+        system("resetprop windowsmgr.max_events_per_sec 120;");
+      };
     } else {
-      system("(setprop ro.HOME_APP_ADJ 1;setprop persist.radio.ramdump 0;setprop pm.sleep_mode 1;setprop persist.wpa_supplicant.debug false;setprop dalvik.vm.checkjni false;setprop dalvik.vm.check-dex-sum false;setprop dalvik.vm.debug.alloc 0;setprop dalvik.vm.deadlock-predict off;setprop dalvik.vm.verify-bytecode false;setprop libc.debug.malloc 0;setprop debug.atrace.tags.enableflags 0;setprop vidc.debug.level 0;setprop debug.mdpcomp.logs 0;setprop logd.logpersistd.enable false;setprop ro.kernel.android.checkjni 0;setprop touch.pressure.scale 0.5;setprop ro.config.nocheckin 1;setprop ro.kernel.checkjni 0;setprop profiler.launch false;setprop profiler.force_disable_err_rpt 1;setprop profiler.force_disable_ulog 1;setprop profiler.debugmonitor false;setprop profiler.hung.dumpdobugreport false;setprop debugtool.anrhistory 0;setprop video.accelerate.hw 1;setprop trustkernel.log.state disable;setprop hwui.render_dirty_regions false;setprop debug.hwui.render_dirty_regions false;setprop persist.sys.ssr.enable_ramdumps 0;setprop persist.vendor.sys.ssr.enable_ramdumps 0;setprop persist.traced.enable 0;setprop ro.lmk.log_stats 0;setprop debug.egl.hw 1;) >/dev/null 2>&1 &");
+      system("(setprop ro.HOME_APP_ADJ 1;setprop persist.radio.ramdump 0;setprop pm.sleep_mode 1;setprop persist.wpa_supplicant.debug false;setprop dalvik.vm.checkjni false;setprop dalvik.vm.check-dex-sum false;setprop dalvik.vm.debug.alloc 0;setprop dalvik.vm.deadlock-predict off;setprop dalvik.vm.verify-bytecode false;setprop libc.debug.malloc 0;setprop debug.atrace.tags.enableflags 0;setprop vidc.debug.level 0;setprop debug.mdpcomp.logs 0;setprop logd.logpersistd.enable false;setprop ro.kernel.android.checkjni 0;setprop touch.pressure.scale 0.5;setprop ro.config.nocheckin 1;setprop ro.kernel.checkjni 0;setprop profiler.launch false;setprop profiler.force_disable_err_rpt 1;setprop profiler.force_disable_ulog 1;setprop profiler.debugmonitor false;setprop profiler.hung.dumpdobugreport false;setprop debugtool.anrhistory 0;setprop video.accelerate.hw 1;setprop trustkernel.log.state disable;setprop hwui.render_dirty_regions false;setprop debug.hwui.render_dirty_regions false;setprop persist.sys.ssr.enable_ramdumps 0;setprop persist.vendor.sys.ssr.enable_ramdumps 0;setprop persist.traced.enable 0;setprop ro.lmk.log_stats 0;setprop debug.egl.hw 1;setprop persist.sys.strictmode.disable 1;) >/dev/null 2>&1 &");
+      if (MAXfreq >= 2400) {
+        system("setprop windowsmgr.max_events_per_sec 240;");
+      } else {
+        system("setprop windowsmgr.max_events_per_sec 120;");
+      };
     };
     if (SDK <= 20) {
       if (file_exist("/sbin/magisk")) {
         system("(resetprop media.stagefright.enable-http false;resetprop media.stagefright.enable-qcp false;resetprop media.stagefright.enable-fma2dp false;resetprop ro.ril.disable.power.collapse 0;resetprop ro.telephony.call_ring.delay 0;resetprop ro.ril.fast.dormancy.rule 0;resetprop ro.ril.gprsclass 12;resetprop ro.ril.enable.a53 1;resetprop ro.ril.hep 1;resetprop MIN_HIDDEN_APPS false;resetprop MIN_RECENT_TASKS false;resetprop APP_SWITCH_DELAY_TIME false;resetprop ro.max.fling_velocity 18000;resetprop ro.min.fling_velocity 900;resetprop dalvik.vm.dexopt-flags m=y,v=n,o=v;) >/dev/null 2>&1 &");
-        if (MAXfreq >= 2400) {
-          system("resetprop windowsmgr.max_events_per_sec 240;");
-        } else {
-          system("resetprop windowsmgr.max_events_per_sec 120;");
-        };
       } else {
         system("(setprop media.stagefright.enable-http false;setprop media.stagefright.enable-qcp false;setprop media.stagefright.enable-fma2dp false;setprop ro.ril.disable.power.collapse 0;setprop ro.telephony.call_ring.delay 0;setprop ro.ril.fast.dormancy.rule 0;setprop ro.ril.gprsclass 12;setprop ro.ril.enable.a53 1;setprop ro.ril.hep 1;setprop MIN_HIDDEN_APPS false;setprop MIN_RECENT_TASKS false;setprop APP_SWITCH_DELAY_TIME false;setprop ro.max.fling_velocity 18000;setprop ro.min.fling_velocity 900;setprop dalvik.vm.dexopt-flags m=y,v=n,o=v;) >/dev/null 2>&1 &");
-        if (MAXfreq >= 2400) {
-          system("setprop windowsmgr.max_events_per_sec 240;");
-        } else {
-          system("setprop windowsmgr.max_events_per_sec 120;");
-        };
       };
     };
-    if (SDK <= 22) {
+    if (SDK <= 20) {
       if (file_exist("/sbin/magisk")) {
         system("(resetprop persist.sys.ui.hw 1;resetprop persist.sys.use_dithering 0;resetprop wifi.supplicant_scan_interval 180;resetprop dev.pm.dyn_samplingrate 1;resetprop debug.sf.hw 1;resetprop debug.gr.swapinterval 1;resetprop debug.gr.numframebuffers 3;resetprop ro.config.disable.hw_accel false;resetprop ro.floatingtouch.available 1;resetprop ro.audio.flinger_standbytime_ms 300;resetprop ro.media.enc.jpeg.quality 100;) >/dev/null 2>&1 &");
       } else {
@@ -825,10 +827,12 @@ int main() {
       };
     };
     if (SDK >= 21) {
-      if (file_exist("/sbin/magisk")) {
-        system("(resetprop dalvik.vm.dex2oat-filter speed;resetprop dalvik.vm.dex2oat-minidebuginfo false;resetprop sys.sysctl.tcp_def_init_rwnd 60;resetprop sys.display-size 3840x2160;resetprop dalvik.vm.dex2oat-flags --no-watch-dog;resetprop dalvik.vm.image-dex2oat-filter --no-watch-dog;) >/dev/null 2>&1 &");
-      } else {
-        system("(setprop dalvik.vm.dex2oat-filter speed;setprop dalvik.vm.dex2oat-minidebuginfo false;setprop sys.sysctl.tcp_def_init_rwnd 60;setprop sys.display-size 3840x2160;setprop dalvik.vm.dex2oat-flags --no-watch-dog;setprop dalvik.vm.image-dex2oat-filter --no-watch-dog;) >/dev/null 2>&1 &");
+      if (SDK <= 28) {
+        if (file_exist("/sbin/magisk")) {
+          system("(resetprop dalvik.vm.dex2oat-filter speed;resetprop dalvik.vm.dex2oat-minidebuginfo false;resetprop sys.sysctl.tcp_def_init_rwnd 60;resetprop sys.display-size 3840x2160;resetprop dalvik.vm.dex2oat-flags --no-watch-dog;resetprop dalvik.vm.image-dex2oat-filter --no-watch-dog;) >/dev/null 2>&1 &");
+        } else {
+          system("(setprop dalvik.vm.dex2oat-filter speed;setprop dalvik.vm.dex2oat-minidebuginfo false;setprop sys.sysctl.tcp_def_init_rwnd 60;setprop sys.display-size 3840x2160;setprop dalvik.vm.dex2oat-flags --no-watch-dog;setprop dalvik.vm.image-dex2oat-filter --no-watch-dog;) >/dev/null 2>&1 &");
+        };
       };
     };
     if (SDK >= 24) {
@@ -839,7 +843,6 @@ int main() {
       };
     };
   };
-  memset(vendr, 0, sizeof(vendr));
   static char ON[] = "1";
   static char OFF[] = "0";
   static char YES[] = "Y";
@@ -908,7 +911,6 @@ int main() {
     fecho(ON, "/sys/module/cpu_boost/parameters/input_boost_enabled");
     chmod("/sys/module/cpu_boost/parameters/input_boost_ms", 0644);
     fecholong(ibs, "/sys/module/cpu_boost/parameters/input_boost_ms");
-    chmod("/sys/module/cpu_boost/parameters/input_boost_ms", 0444);
     if (rus == 0) {
       flog("Оптимизировано ускорение ввода️", ".️", 1);
     } else {
@@ -918,7 +920,6 @@ int main() {
     fecho(ON, "/sys/kernel/cpu_input_boost/enabled");
     chmod("/sys/module/cpu_input_boost/parameters/input_boost_duration", 0644);
     fecholong(ibs, "/sys/module/cpu_input_boost/parameters/input_boost_duration");
-    chmod("/sys/module/cpu_input_boost/parameters/input_boost_duration", 0444);
     if (rus == 0) {
       flog("Оптимизировано ускорение ввода️", ".️", 1);
     } else {
@@ -983,7 +984,6 @@ int main() {
   fecho(NO, "/sys/module/wakeup/parameters/enable_wlan_ipa_ws");
   fecho(NO, "/sys/module/wakeup/parameters/enable_wlan_pno_wl_ws");
   fecho(NO, "/sys/module/wakeup/parameters/enable_wcnss_filter_lock_ws");
-  fecho(NO, "/sys/module/wakeup/parameters/enable_smb135x_wake_ws");
   fecho("qcom_rx_wakelock;", "/sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker");
   if (file_exist("/sys/devices/virtual/sec/sec_touchscreen/tsp_threshold")) {
     fecho("50", "/sys/devices/virtual/sec/sec_touchscreen/tsp_threshold");
@@ -1049,14 +1049,14 @@ int main() {
     };
   };
   if (file_exist("/sys/module/adreno_idler/parameters/adreno_idler_active")) {
-    fecho(YES, "/sys/module/adreno_idler/parameters/adreno_idler_active");
+    fecho(NO, "/sys/module/adreno_idler/parameters/adreno_idler_active");
     fecho("5000", "/sys/module/adreno_idler/parameters/adreno_idler_idleworkload");
     fecho("16", "/sys/module/adreno_idler/parameters/adreno_idler_downdifferential");
     fecho("27", "/sys/module/adreno_idler/parameters/adreno_idler_idlewait");
     if (rus == 0) {
-      flog("Активирован и оптимизирован Adreno idler", ".️", 1);
+      flog("Выключен Adreno idler", ".️", 1);
     } else {
-      flog("Adreno Idler activated & optimized", ".", 1);
+      flog("Adreno Idler deactivated", ".", 1);
     };
   };
   if (file_exist("/sys/module/mali/parameters/mali_debug_level")) {
@@ -1116,14 +1116,16 @@ int main() {
     };
     fecho("56", "/d/mdss_panel_fb0/intf0/min_refresh_rate");
   } else if (file_exist("/sys/kernel/debug/msm_fb/0/vsync_enable")) {
-    if (rus == 0) {
-      flog("Оптимизация частоты кадров", "...️", 1);
-    } else {
-      flog("FPS optimization", "...", 1);
+    if (SDK <= 18) {
+      if (rus == 0) {
+        flog("Оптимизация частоты кадров", "...️", 1);
+      } else {
+        flog("FPS optimization", "...", 1);
+      };
+      fsetval(OFF, "/sys/kernel/debug/msm_fb/0/vsync_enable");
+      fsetval("16", "/sys/kernel/debug/msm_fb/mdp/mdp_usec_diff_treshold");
+      fsetval("40", "/sys/kernel/debug/msm_fb/mdp/vs_rdcnt_slow");
     };
-    fsetval(OFF, "/sys/kernel/debug/msm_fb/0/vsync_enable");
-    fsetval("16", "/sys/kernel/debug/msm_fb/mdp/mdp_usec_diff_treshold");
-    fsetval("40", "/sys/kernel/debug/msm_fb/mdp/vs_rdcnt_slow");
   };
   if (file_exist("/sys/module/cryptomgr/parameters/notests")) {
     fsetval(YES, "/sys/module/cryptomgr/parameters/notests");
@@ -1151,10 +1153,6 @@ int main() {
   fecho("3", "/proc/sys/net/ipv4/tcp_fastopen");
   fecho("60", "/proc/sys/net/ipv4/tcp_default_init_rwnd");
   fecho("3600", "/proc/sys/net/core/xfrm_acq_expires");
-  fecho("cubic", "/proc/sys/net/ipv4/tcp_congestion_control");
-  fecho("htcp", "/proc/sys/net/ipv4/tcp_congestion_control");
-  fecho("westwood", "/proc/sys/net/ipv4/tcp_congestion_control");
-  fecho("bbr", "/proc/sys/net/ipv4/tcp_congestion_control");
   fecho("2", "/sys/module/tcp_cubic/parameters/hystart_detect");
   if (rus == 0) {
     flog("Оптимизирован сетевой стек ядра", ".️", 1);
@@ -1180,7 +1178,7 @@ int main() {
   } else {
     flog("Cleaning various system trash files", "...", 1);
   };
-  system("(rm -f /data/*.log;rm -f /data/*.txt;rm -f /data/anr/*;rm -f /data/backup/pending/*.tmp;rm -f /data/cache/*.*;rm -f /data/data/*.log;rm -f /data/data/*.txt;rm -f /data/log/*.log;rm -f /data/log/*.txt;rm -f /data/local/*.apk;rm -f /data/local/*.log;rm -f /data/local/*.txt;rm -f /data/last_alog/*.log;rm -f /data/last_alog/*.txt;rm -f /data/last_kmsg/*.log;rm -f /data/last_kmsg/*.txt;rm -f /data/mlog/*;rm -f /data/system/*.log;rm -f /data/system/*.txt;rm -f /data/system/dropbox/* >/dev/null 2>&1 & rm -Rf /data/system/usagestats/*;rm -f /data/system/shared_prefs/*;rm -f /data/tombstones/* >/dev/null 2>&1 & rm -Rf /sdcard/LOST.DIR >/dev/null 2>&1 & rm -Rf /sdcard/found000 >/dev/null 2>&1 & rm -Rf /sdcard/LazyList >/dev/null 2>&1 & rm -Rf /sdcard/albumthumbs >/dev/null 2>&1 & rm -Rf /sdcard/kunlun >/dev/null 2>&1 & rm -Rf /sdcard/.CacheOfEUI >/dev/null 2>&1 & rm -Rf /sdcard/.bstats >/dev/null 2>&1 & rm -Rf /sdcard/.taobao >/dev/null 2>&1 & rm -Rf /sdcard/Backucup >/dev/null 2>&1 & rm -Rf /sdcard/MIUI/debug_log >/dev/null 2>&1 & rm -Rf /sdcard/wlan_logs >/dev/null 2>&1 & rm -Rf /sdcard/ramdump >/dev/null 2>&1 & rm -Rf /sdcard/UnityAdsVideoCache;rm -f /sdcard/*.log;rm -f /sdcard/*.CHK;) >/dev/null 2>&1 &");
+  system("(rm -f /data/*.log;rm -f /data/*.txt;rm -f /data/anr/*;rm -f /data/backup/pending/*.tmp;rm -f /data/cache/*.*;rm -f /data/data/*.log;rm -f /data/data/*.txt;rm -f /data/log/*.log;rm -f /data/log/*.txt;rm -f /data/local/*.apk;rm -f /data/local/*.log;rm -f /data/local/*.txt;rm -f /data/last_alog/*.log;rm -f /data/last_alog/*.txt;rm -f /data/last_kmsg/*.log;rm -f /data/last_kmsg/*.txt;rm -f /data/mlog/*;rm -f /data/system/*.log;rm -f /data/system/*.txt;rm -Rf /data/system/usagestats/*;rm -f /data/system/shared_prefs/*;rm -f /data/tombstones/* >/dev/null 2>&1 & rm -Rf /sdcard/LOST.DIR >/dev/null 2>&1 & rm -Rf /sdcard/found000 >/dev/null 2>&1 & rm -Rf /sdcard/LazyList >/dev/null 2>&1 & rm -Rf /sdcard/albumthumbs >/dev/null 2>&1 & rm -Rf /sdcard/kunlun >/dev/null 2>&1 & rm -Rf /sdcard/.CacheOfEUI >/dev/null 2>&1 & rm -Rf /sdcard/.bstats >/dev/null 2>&1 & rm -Rf /sdcard/.taobao >/dev/null 2>&1 & rm -Rf /sdcard/Backucup >/dev/null 2>&1 & rm -Rf /sdcard/MIUI/debug_log >/dev/null 2>&1 & rm -Rf /sdcard/wlan_logs >/dev/null 2>&1 & rm -Rf /sdcard/ramdump >/dev/null 2>&1 & rm -Rf /sdcard/UnityAdsVideoCache;rm -f /sdcard/*.log;rm -f /sdcard/*.CHK;) >/dev/null 2>&1 &");
   if (kpro != 0 && mi9t != 0) {
     if (file_exist("/sys/module/mmc_core/parameters/crc")) {
       fecho(OFF, "/sys/module/mmc_core/parameters/crc");
@@ -1207,16 +1205,14 @@ int main() {
       flog("I/O optimization for all partitions", "...", 1);
     };
     if (RAM >= 3600) {
-      system("for h in /sys/fs/ext4/*;do /dev/fdeai/busybox echo '64'>${h}/inode_readahead_blks;done >/dev/null 2>&1 &");
       system("for ma in /sys/devices/virtual/bdi/179*;do /dev/fdeai/busybox echo '1024'>${ma}/read_ahead_kb;done >/dev/null 2>&1 &");
       system("if [ -d /sys/block/sda ];then for sd in a b c d e f g;do /dev/fdeai/busybox echo '1024'>/sys/block/sd${sd}/queue/read_ahead_kb;done >/dev/null 2>&1 fi;if [ -d /sys/block/mmcblk0 ];then /dev/fdeai/busybox echo '1024'>/sys/block/mmcblk0/queue/read_ahead_kb;fi;if [ -d /sys/block/mtdblock0 ];then /dev/fdeai/busybox echo '1024'>/sys/block/mtdblock0/queue/read_ahead_kb;fi;if [ -d /sys/block/dm-0 ];then for dm in 0 1 2 3 4 5;do /dev/fdeai/busybox echo '1024'>/sys/block/dm-${dm}/queue/read_ahead_kb;done >/dev/null 2>&1 & fi;");
     } else {
       system("for ma in /sys/devices/virtual/bdi/179*;do /dev/fdeai/busybox echo '512'>${ma}/read_ahead_kb;done >/dev/null 2>&1 &");
       system("if [ -d /sys/block/sda ];then for sd in a b c d e f g;do /dev/fdeai/busybox echo '512'>/sys/block/sd${sd}/queue/read_ahead_kb;done >/dev/null 2>&1;fi;if [ -d /sys/block/mmcblk0 ];then /dev/fdeai/busybox echo '512'>/sys/block/mmcblk0/queue/read_ahead_kb;fi;if [ -d /sys/block/mtdblock0 ];then /dev/fdeai/busybox echo '512'>/sys/block/mtdblock0/queue/read_ahead_kb;fi;if [ -d /sys/block/dm-0 ];then for dm in 0 1 2 3 4 5;do /dev/fdeai/busybox echo '512'>/sys/block/dm-${dm}/queue/read_ahead_kb;done >/dev/null 2>&1 & fi >/dev/null 2>&1");
     };
-    system("for iii in /sys/class/scsi_disk/*;do /dev/fdeai/busybox echo 'temporary none'>${iii}/cache_type;done >/dev/null 2>&1 &");
-    system("for meow in /sys/block/*/queue;do /dev/fdeai/busybox echo '0'>${meow}/add_random;/dev/fdeai/busybox echo '0'>${meow}/iostats;/dev/fdeai/busybox echo '2'>${meow}/nomerges;/dev/fdeai/busybox echo '0'>${meow}/rotational;/dev/fdeai/busybox echo '1'>${meow}/rq_affinity;/dev/fdeai/busybox echo '1'>${meow}/back_seek_penalty;/dev/fdeai/busybox echo '0'>${meow}/iosched/slice_idle;/dev/fdeai/busybox echo '0'>${meow}/iosched/low_latency;done >/dev/null 2>&1 &");
-    system("for fg in /sys/fs/f2fs*/*;do /dev/fdeai/busybox echo '27'>${fg}/ram_thresh;echo '48'>${fg}/trim_sections;/dev/fdeai/busybox echo '900'>${fg}/cp_interval;done >/dev/null 2>&1 &");
+    system("for meow in /sys/block/*/queue;do /dev/fdeai/busybox echo '0'>${meow}/add_random;/dev/fdeai/busybox echo '0'>${meow}/iostats;/dev/fdeai/busybox echo '2'>${meow}/nomerges;/dev/fdeai/busybox echo '0'>${meow}/rotational;/dev/fdeai/busybox echo '1'>${meow}/rq_affinity;/dev/fdeai/busybox echo '1'>${meow}/back_seek_penalty;/dev/fdeai/busybox echo '0'>${meow}/iosched/slice_idle;done >/dev/null 2>&1 &");
+    system("for fg in /sys/fs/f2fs*/*;do /dev/fdeai/busybox echo '27'>${fg}/ram_thresh;echo '48'>${fg}/trim_sections;/dev/fdeai/busybox echo '90'>${fg}/cp_interval;done >/dev/null 2>&1 &");
   };
   if (file_exist("/sys/block/zram0/queue/read_ahead_kb")) {
     fecho("64", "/sys/block/zram0/queue/read_ahead_kb");
@@ -1268,14 +1264,12 @@ int main() {
     link("/dev/urandom", "/dev/random");
   };
   system("(/dev/fdeai/busybox fstrim /data;/dev/fdeai/busybox fstrim /system;/dev/fdeai/busybox fstrim /vendor;) >/dev/null 2>&1 &");
-  if (SDK >= 20) {
+  if (SDK >= 24) {
     fecho("128", "/proc/sys/kernel/random/read_wakeup_threshold");
     fecho("384", "/proc/sys/kernel/random/write_wakeup_threshold");
-    fecho("72", "/proc/sys/kernel/random/urandom_min_reseed_secs");
   } else {
     fecho("384", "/proc/sys/kernel/random/read_wakeup_threshold");
     fecho("1024", "/proc/sys/kernel/random/write_wakeup_threshold");
-    fecho("72", "/proc/sys/kernel/random/urandom_min_reseed_secs");
   };
   if (rus == 0) {
     flog("Оптимизированы параметры генератора энтропии", ".️", 1);
@@ -1456,8 +1450,14 @@ int main() {
   };
   fecho(OFF, "/sys/module/msm_thermal/core_control/enabled");
   fecho(NO, "/sys/module/msm_thermal/core_control/parameters/enabled");
-  system("stop mpdecision;if [ -e /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor ];then chmod 664 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor; for nn in /sys/devices/system/cpu/cpu*/cpufreq/*;do chmod 664 ${nn}/*;/dev/fdeai/busybox echo '10000'>${nn}/sampling_rate;/dev/fdeai/busybox echo '2'>${nn}/sampling_down_factor;/dev/fdeai/busybox echo '2'>${nn}/sample_rate_jiffies;/dev/fdeai/busybox echo '10000'>${nn}/up_rate_us;/dev/fdeai/busybox echo '10000'>${nn}/down_rate_us;/dev/fdeai/busybox echo '-1'>${nn}/timer_slack;/dev/fdeai/busybox echo '0'>${nn}/boost;/dev/fdeai/busybox echo '0'>${nn}/sync_freq;/dev/fdeai/busybox echo '0'>${nn}/enforced_mode;/dev/fdeai/busybox echo '1'>${nn}/use_migration_notif;done >/dev/null 2>&1 & elif [ -e /sys/devices/system/cpu/cpufreq/scaling_governor ];then chmod 664 /sys/devices/system/cpu/cpufreq/scaling_governor; for mm in /sys/devices/system/cpu/cpufreq/*;do chmod 664 ${mm}/*;/dev/fdeai/busybox echo '10000'>${mm}/sampling_rate;/dev/fdeai/busybox echo '2'>${mm}/sampling_down_factor;/dev/fdeai/busybox echo '2'>${mm}/sample_rate_jiffies;echo '10000'>${mm}/up_rate_us;/dev/fdeai/busybox echo '10000'>${mm}/down_rate_us;/dev/fdeai/busybox echo '-1'>${mm}/timer_slack;/dev/fdeai/busybox echo '0'>${mm}/boost;echo '0'>${mm}/sync_freq;/dev/fdeai/busybox echo '0'>${mm}/enforced_mode;/dev/fdeai/busybox echo '1'>${mm}/use_migration_notif;done >/dev/null 2>&1 & fi;start mpdecision;");
+  if (strstr(vendr, "qcom") != 0) {
+    system("stop mpdecision");
+  };
+  system("if [ -e /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor ];then chmod 664 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor; for nn in /sys/devices/system/cpu/cpu*/cpufreq/*;do chmod 664 ${nn}/*;/dev/fdeai/busybox echo '10000'>${nn}/sampling_rate;/dev/fdeai/busybox echo '2'>${nn}/sampling_down_factor;/dev/fdeai/busybox echo '2'>${nn}/sample_rate_jiffies;/dev/fdeai/busybox echo '10000'>${nn}/up_rate_us;/dev/fdeai/busybox echo '10000'>${nn}/down_rate_us;/dev/fdeai/busybox echo '-1'>${nn}/timer_slack;/dev/fdeai/busybox echo '0'>${nn}/boost;/dev/fdeai/busybox echo '0'>${nn}/sync_freq;/dev/fdeai/busybox echo '0'>${nn}/enforced_mode;/dev/fdeai/busybox echo '1'>${nn}/use_migration_notif;done >/dev/null 2>&1 & elif [ -e /sys/devices/system/cpu/cpufreq/scaling_governor ];then chmod 664 /sys/devices/system/cpu/cpufreq/scaling_governor; for mm in /sys/devices/system/cpu/cpufreq/*;do chmod 664 ${mm}/*;/dev/fdeai/busybox echo '10000'>${mm}/sampling_rate;/dev/fdeai/busybox echo '2'>${mm}/sampling_down_factor;/dev/fdeai/busybox echo '2'>${mm}/sample_rate_jiffies;/dev/fdeai/busybox echo '10000'>${mm}/up_rate_us;/dev/fdeai/busybox echo '10000'>${mm}/down_rate_us;/dev/fdeai/busybox echo '-1'>${mm}/timer_slack;/dev/fdeai/busybox echo '0'>${mm}/boost;/dev/fdeai/busybox echo '0'>${mm}/sync_freq;/dev/fdeai/busybox echo '0'>${mm}/enforced_mode;/dev/fdeai/busybox echo '1'>${mm}/use_migration_notif;done >/dev/null 2>&1 & fi;");
   fsetval(ON, "/sys/module/msm_thermal/core_control/enabled");
+  if (strstr(vendr, "qcom") != 0) {
+    system("start mpdecision");
+  };
   if (file_exist("/sys/module/msm_thermal/core_control/enabled")) {
     chmod("/sys/module/msm_thermal/core_control/enabled", 0644);
   };
@@ -1468,6 +1468,7 @@ int main() {
   };
   fecho(YES, "/sys/module/msm_thermal/core_control/parameters/enabled");
   fecho("10", "/sys/class/thermal/thermal_message/sconfig");
+  memset(vendr, 0, sizeof(vendr));
   if (file_exist("/sys/module/workqueue/parameters/power_efficient")) {
     fsetval(YES, "/sys/module/workqueue/parameters/power_efficient");
     if (rus == 0) {
